@@ -1,20 +1,22 @@
 const config = require('config.json');
 const jwt = require('jsonwebtoken');
 
-// users hardcoded for simplicity, store in a db for production applications
-var users = [{ id: 1, username: 'test', password: 'test', firstName: 'Test', lastName: 'User' }, { id: 2, username: 'test2', password: 'test2', firstName: 'Test2', lastName: 'User2' }];
+const Account = require('models/accounts').Account;
+
 module.exports = {
     authenticate,
     getAll
 };
 
 async function authenticate({ username, password }) {
+    const users = await Account.findAll();
+
     const user = users.find(u => u.username === username && u.password === password);
 
     if (!user) throw 'Username or password is incorrect';
 
-    // create a jwt token that is valid for 7 days
-    const token = jwt.sign({ sub: user.id }, config.secret, { expiresIn: '7d' });
+    // create a jwt token that is valid for 1 hour
+    const token = jwt.sign({ sub: user.id }, config.secret, { expiresIn: '3600' });
 
     return {
         ...omitPassword(user),
@@ -23,7 +25,8 @@ async function authenticate({ username, password }) {
 }
 
 async function getAll() {
-    return users.map(u => omitPassword(u));
+    const users = await Account.findAll();
+    return users;
 }
 
 // helper functions
@@ -32,3 +35,4 @@ function omitPassword(user) {
     const { password, ...userWithoutPassword } = user;
     return userWithoutPassword;
 }
+

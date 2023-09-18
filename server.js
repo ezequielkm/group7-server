@@ -6,8 +6,6 @@ const jwt = require('_helpers/jwt');
 const errorHandler = require('_helpers/error-handler');
 
 require("dotenv").config();
- 
-const db = require("./db");
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
@@ -22,7 +20,17 @@ app.use('/users', require('./users/users.controller'));
 // global error handler
 app.use(errorHandler);
 
-db.connect();
+//sync database
+(async () => {
+    const database = require('db');
+ 
+    try {
+        const resultado = await database.sequelize.sync();
+        console.log(resultado);
+    } catch (error) {
+        console.log(error);
+    }
+})();
 
 // start server
 const port = 4000;
