@@ -5,7 +5,8 @@ const Account = require('models/accounts').Account;
 
 module.exports = {
     authenticate,
-    getAll
+    getAll,
+    createAccount
 };
 
 async function authenticate({ username, password }) {
@@ -28,5 +29,19 @@ async function getAll() {
     const users = await Account.findAll();
     return users;
 }
+
+async function createAccount({ username, password, email }) {
+      
+        // Create a Account
+        const account = {
+          username: username,
+          password: password,
+          email: email
+        };
+      
+        // Save Tutorial in the database
+        Account.create(account);
+      };
+
 
 

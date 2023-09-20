@@ -8,6 +8,7 @@ const jwt = require('jsonwebtoken');
 // routes
 router.post('/authenticate', authenticate);
 router.get('/', authenticateToken, getAll);
+router.post('/', createAccount);
 
 module.exports = router;
 
@@ -21,6 +22,12 @@ function getAll(req, res, next) {
         userService.getAll()
         .then(users => res.json(users))
         .catch(next);
+}
+
+function createAccount (req, res) {
+    userService.createAccount(req.body)
+        .then(() => res.json({}))
+        .catch(err => res.status(400).json({ message: err }));
 }
 
 function authenticateToken(req, res, next) {
