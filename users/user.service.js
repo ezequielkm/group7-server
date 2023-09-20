@@ -15,11 +15,11 @@ async function authenticate({ username, password }) {
 
     if (!user) throw 'Username or password is incorrect';
 
-    // create a jwt token that is valid for 1 hour
-    const token = jwt.sign({ sub: user.id }, config.secret, { expiresIn: '3600' });
+    // create a jwt token that is valid for 3 hours
+    const token = jwt.sign({ sub: user.user_id }, config.secret, { expiresIn: '3h' });
 
     return {
-        ...omitPassword(user),
+        user,
         token
     };
 }
@@ -29,10 +29,4 @@ async function getAll() {
     return users;
 }
 
-// helper functions
-
-function omitPassword(user) {
-    const { password, ...userWithoutPassword } = user;
-    return userWithoutPassword;
-}
 
