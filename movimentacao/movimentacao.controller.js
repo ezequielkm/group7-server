@@ -3,7 +3,7 @@ const router = express.Router();
 const movimentacaoService = require('./movimentacao.service');
 
 // routes
-router.get('/movimentacao', getAll);
+router.get('/', getAll);
 
 module.exports = router;
 

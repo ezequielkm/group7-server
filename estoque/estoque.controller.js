@@ -3,7 +3,7 @@ const router = express.Router();
 const estoqueService = require('./estoque.service');
 
 // routes
-router.get('/estoque', getAll);
+router.get('/', getAll);
 
 module.exports = router;
 
