@@ -6,7 +6,8 @@ const Account = require('models/accounts').Account;
 module.exports = {
     authenticate,
     getAll,
-    createAccount
+    createAccount,
+    deleteAccount
 };
 
 async function authenticate({ username, password }) {
@@ -43,5 +44,15 @@ async function createAccount({ username, password, email }) {
         Account.create(account);
       };
 
+async function deleteAccount(id) {
+    if (id == '2') {
+        throw 'You cannot delete the admin account';
+    }
+    await Account.destroy({
+        where: {
+            user_id: id
+        }
+    });
+}
 
 
