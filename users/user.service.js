@@ -7,7 +7,8 @@ module.exports = {
     authenticate,
     getAll,
     createAccount,
-    deleteAccount
+    deleteAccount,
+    authenticateGit
 };
 
 async function authenticate({ username, password }) {
@@ -16,6 +17,22 @@ async function authenticate({ username, password }) {
     const user = users.find(u => u.username === username && u.password === password);
 
     if (!user) throw 'Username or password is incorrect';
+
+    // create a jwt token that is valid for 3 hours
+    const token = jwt.sign({ sub: user.user_id }, config.secret, { expiresIn: '3h' });
+
+    return {
+        user,
+        token
+    };
+}
+
+async function authenticateGit({ username, email }) {
+    const users = await Account.findAll();
+
+    const user = users.find(u => u.username === username && u.email === email);
+
+    if (!user) throw 'Username or email is incorrect';
 
     // create a jwt token that is valid for 3 hours
     const token = jwt.sign({ sub: user.user_id }, config.secret, { expiresIn: '3h' });
