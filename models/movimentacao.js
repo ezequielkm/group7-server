@@ -9,7 +9,7 @@ const Movimentacao = database.sequelize.define('movimentacao', {
         primaryKey: true
     },
     idEstoque: {
-        type: Sequelize.STRING,        
+        type: Sequelize.BIGINT,        
         allowNull: false        
     },
     tipo: {
