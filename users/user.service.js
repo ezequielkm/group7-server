@@ -3,6 +3,8 @@ const jwt = require('jsonwebtoken');
 
 const Account = require('models/accounts').Account;
 
+const crypto = require('crypto');
+
 module.exports = {
     authenticate,
     getAll,
@@ -10,6 +12,10 @@ module.exports = {
     deleteAccount,
     authenticateGit
 };
+
+let username = '';
+let password = '';
+let email = '';
 
 async function authenticate({ username, password }) {
     const users = await Account.findAll();
@@ -32,7 +38,19 @@ async function authenticateGit({ username, email }) {
 
     const user = users.find(u => u.username === username && u.email === email);
 
-    if (!user) throw 'Username or email is incorrect';
+    if (!user) {
+        password = crypto.randomBytes(4).toString('hex');
+        username = username;
+        email = email;
+        await createGitAccount(username, password , email);
+        const users = await Account.findAll();
+        const user = users.find(u => u.username === username && u.email === email);
+        const token = jwt.sign({ sub: user.user_id }, config.secret, { expiresIn: '3h' });
+        return {
+            user,
+            token
+        };
+    }
 
     // create a jwt token that is valid for 3 hours
     const token = jwt.sign({ sub: user.user_id }, config.secret, { expiresIn: '3h' });
@@ -59,6 +77,19 @@ async function createAccount({ username, password, email }) {
       
         // Save Tutorial in the database
         Account.create(account);
+      };
+
+      async function createGitAccount(username, password , email) {
+      
+        // Create a Account
+        const account = {
+          username: username,
+          password: password,
+          email: email
+        };
+      
+        // Save Tutorial in the database
+        await Account.create(account);
       };
 
 async function deleteAccount(id) {
