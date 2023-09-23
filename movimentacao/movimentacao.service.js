@@ -2,7 +2,8 @@ const Movimentacao = require('models/movimentacao').Movimentacao;
 
 module.exports = {    
     getAll,
-    addMovimentacao
+    addMovimentacao,
+    deleteMovimentacao
 };
 
 async function getAll() {
@@ -20,4 +21,14 @@ async function addMovimentacao({idEstoque, tipo, produto, quantidade, preco, dat
         data: data
     };
     Movimentacao.create(movimentacao);
+}
+
+async function deleteMovimentacao(id) {    
+    console.log('AAAAA: 2');
+
+    await Movimentacao.destroy({
+        where: {
+            id: id
+        }
+    });
 }
