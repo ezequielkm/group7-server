@@ -1,36 +1,32 @@
 const {Product} = require("../models/product");
 
-const editProduct = async({id, tipo, nome, vencimento}) =>
+const editProduct = async(id, {tipo, nome, vencimento}) =>
 {
     try 
     {
         let product = await Product.findOne({where: {id}})
 
         product.tipo = tipo
-        product.tipo = nome
-        product.tipo = vencimento
+        product.nome = nome
+        product.vencimento = vencimento
     
-        product.save()   
-
-        return true
+        return product.save()   
     } 
     catch (error) 
     {
-        return error
+        throw error
     }
 }
 
-const addProduct = async({tipo, nome, vencimento}) =>
+const addProduct = async(user_id, {tipo, nome, vencimento}) =>
 {
     try 
     {
-        await Product.create({tipo, nome, vencimento})
-
-        return true
+        return await Product.create({user_id, tipo, nome, vencimento})
     } 
     catch (error) 
     {
-        return error
+        throw error
     }
 }
 
@@ -38,25 +34,23 @@ const getAllProduct = async(user_id) =>
 {
     try 
     {
-        return await Product.findAll({where: {user_id: user_id}});
+        return await Product.findAll({where: {user_id}});
     } 
     catch (error) 
     {
-        return error
+        throw error
     }
 }
 
-const deleteProduct = async({id}) =>
+const deleteProduct = async(id) =>
 {
     try 
     {
-        await Product.destroy({where: {id}})
-
-        return true
+        return await Product.destroy({where: {id}})
     } 
     catch (error) 
     {
-        return error
+        throw error
     }
 }
 
