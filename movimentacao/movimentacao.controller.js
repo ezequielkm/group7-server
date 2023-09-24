@@ -22,13 +22,13 @@ function addMovimentacao(req, res, next) {
         .catch(next);
 }
 
-function deleteMovimentacao(req, req, next) {
+function deleteMovimentacao(req, res, next) {
     console.log('AAAAA: 1 ' + req.params.id);
     movimentacaoService.deleteMovimentacao(req.params.id)
         .then(() => res.json({}))
         .catch(next);
 }
 
-function editMovimentacao(req, req, next) {
+function editMovimentacao(req, res, next) {
     console.log('EDIT 1 - ' + req.params.id);
 }
