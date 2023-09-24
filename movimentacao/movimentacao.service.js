@@ -24,9 +24,7 @@ async function addMovimentacao({idEstoque, tipo, produto, quantidade, preco, dat
     Movimentacao.create(movimentacao);
 }
 
-async function deleteMovimentacao(id) {    
-    console.log('AAAAA: 2');
-
+async function deleteMovimentacao(id) {     
     await Movimentacao.destroy({
         where: {
             id: id
@@ -34,6 +32,12 @@ async function deleteMovimentacao(id) {
     });
 }
 
-async function editMovimentacao(idEdit) {
-    console.log('EDIT 2 - ' + idEdit);
+async function editMovimentacao(id) {
+    console.log('EDIT 2 - ' + id);
+
+    // await Movimentacao.({
+    //     where: {
+    //         id: id
+    //     }
+    // });
 }
