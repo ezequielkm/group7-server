@@ -18,45 +18,45 @@ let password = '';
 let email = '';
 
 async function authenticate({ username, password }) {
-    const users = await Account.findAll();
+    const accounts = await Account.findAll();
 
-    const user = users.find(u => u.username === username && u.password === password);
+    const account = accounts.find(u => u.username === username && u.password === password);
 
-    if (!user) throw 'Username or password is incorrect';
+    if (!account) throw 'Username or password is incorrect';
 
     // create a jwt token that is valid for 3 hours
-    const token = jwt.sign({ sub: user.user_id }, config.secret, { expiresIn: '3h' });
+    const token = jwt.sign({ sub: account.user_id }, config.secret, { expiresIn: '3h' });
 
     return {
-        user,
+        account,
         token
     };
 }
 
 async function authenticateGit({ username, email }) {
-    const users = await Account.findAll();
+    const accounts = await Account.findAll();
 
-    const user = users.find(u => u.username === username && u.email === email);
+    const account = accounts.find(u => u.username === username && u.email === email);
 
-    if (!user) {
+    if (!account) {
         password = crypto.randomBytes(4).toString('hex');
         username = username;
         email = email;
         await createGitAccount(username, password , email);
-        const users = await Account.findAll();
-        const user = users.find(u => u.username === username && u.email === email);
+        const accounts = await Account.findAll();
+        const account = accounts.find(u => u.username === username && u.email === email);
         const token = jwt.sign({ sub: user.user_id }, config.secret, { expiresIn: '3h' });
         return {
-            user,
+            account,
             token
         };
     }
 
     // create a jwt token that is valid for 3 hours
-    const token = jwt.sign({ sub: user.user_id }, config.secret, { expiresIn: '3h' });
+    const token = jwt.sign({ sub: account.user_id }, config.secret, { expiresIn: '3h' });
 
     return {
-        user,
+        account,
         token
     };
 }
