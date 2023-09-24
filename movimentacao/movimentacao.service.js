@@ -3,7 +3,8 @@ const Movimentacao = require('models/movimentacao').Movimentacao;
 module.exports = {    
     getAll,
     addMovimentacao,
-    deleteMovimentacao
+    deleteMovimentacao,
+    editMovimentacao
 };
 
 async function getAll() {
@@ -31,4 +32,8 @@ async function deleteMovimentacao(id) {
             id: id
         }
     });
+}
+
+async function editMovimentacao(idEdit) {
+    console.log('EDIT 2 - ' + idEdit);
 }
