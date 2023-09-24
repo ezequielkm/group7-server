@@ -62,8 +62,8 @@ async function authenticateGit({ username, email }) {
 }
 
 async function getAll() {
-    const users = await Account.findAll();
-    return users;
+    const accounts = await Account.findAll();
+    return accounts;
 }
 
 async function createAccount({ username, password, email }) {

@@ -28,5 +28,11 @@ const Account = database.sequelize.define('accounts', {
         type: Sequelize.DATE,
         allowNull: false
     }
-})
+}, {
+    defaultScope: {
+      attributes: {
+        exclude: ['password']
+      }
+    }
+  })
 module.exports = { Account };
