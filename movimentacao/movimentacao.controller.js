@@ -22,8 +22,7 @@ function addMovimentacao(req, res, next) {
         .catch(next);
 }
 
-function deleteMovimentacao(req, res, next) {
-    console.log('AAAAA: 1 ' + req.params.id);
+function deleteMovimentacao(req, res, next) {    
     movimentacaoService.deleteMovimentacao(req.params.id)
         .then(() => res.json({}))
         .catch(next);
@@ -31,4 +30,8 @@ function deleteMovimentacao(req, res, next) {
 
 function editMovimentacao(req, res, next) {
     console.log('EDIT 1 - ' + req.params.id);
+        
+    movimentacaoService.editMovimentacao(req.params.id)
+        .then(() => res.json({}))
+        .catch(next);
 }
