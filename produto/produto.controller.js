@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const jwt = require('jsonwebtoken');
+const { secret } = require('config.json');
 const productService = require('./produto.service');
 
 const editProduct = async (request, response, next) =>
@@ -77,7 +79,7 @@ const authentication = async (request, response, next) =>
 }
 
 router.put('/:id', authentication, editProduct);
-router.post('/:id', authentication, addProduct);
+router.post('/', authentication, addProduct);
 router.get('/', authentication, getAllProduct);
 router.delete('/:id', authentication, deleteProduct);
 
