@@ -21,7 +21,8 @@ let password = '';
 let email = '';
 
 async function authenticate({ username, password }) {
-    const accounts = await Account.findAll();
+    //added null scope to this call so it will retrieve password as well. This is needed because default scope is hiding password values.
+    const accounts = await Account.scope(null).findAll();
 
     const account = accounts.find(u => u.username === username && u.password === password);
 
