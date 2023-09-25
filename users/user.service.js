@@ -3,7 +3,10 @@ const jwt = require('jsonwebtoken');
 
 const Account = require('models/accounts').Account;
 
+const Role = require('models/accounts').Role;
+
 const crypto = require('crypto');
+
 
 module.exports = {
     authenticate,
@@ -43,7 +46,7 @@ async function authenticateGit({ username, email }) {
         username = username;
         email = email;
         await createGitAccount(username, password , email);
-        const accounts = await Account.findAll();
+        const accounts = await Account.findAll(false);
         const account = accounts.find(u => u.username === username && u.email === email);
         const token = jwt.sign({ sub: user.user_id }, config.secret, { expiresIn: '3h' });
         return {
@@ -61,11 +64,30 @@ async function authenticateGit({ username, email }) {
     };
 }
 
-async function getAll() {
-    const accounts = await Account.findAll();
-    return accounts;
+async function getAll(includeRoles) {
+    if (includeRoles) {
+        const accounts = await Account.findAll({
+            include: [
+              Role,
+            ],
+          });
+          return accounts;
+    }
+    else {
+        const accounts = await Account.findAll();
+        return accounts;
+    }
+    
 }
-
+async function getRoles() {
+    const roles = await Role.findAll();
+    return roles;
+}
+async function grantPermission({ user_id, role_id }) {
+    const Roles = await getRoles();
+    const role = Roles.find(r => r.role_id === role_id);
+    await AccountRoles.create({user_id: user_id, role_id: role.role_id} );
+}
 async function createAccount({ username, password, email }) {
       
         // Create a Account
@@ -75,8 +97,8 @@ async function createAccount({ username, password, email }) {
           email: email
         };
       
-        // Save Tutorial in the database
-        Account.create(account);
+        const createdAccount = await Account.create(account);
+        await grantPermission(createdAccount.user_id, 1)
       };
 
       async function createGitAccount(username, password , email) {
@@ -97,6 +119,11 @@ async function deleteAccount(id) {
         throw 'You cannot delete the admin account';
     }
     await Account.destroy({
+        where: {
+            user_id: id
+        }
+    });
+    await AccountRoles.destroy({
         where: {
             user_id: id
         }
