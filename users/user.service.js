@@ -18,7 +18,9 @@ module.exports = {
     authenticateGit,
     getUserWithRoles,
     isUserAdmin,
-    getRoles
+    getRoles,
+    editAccount,
+    getUserWithRoles
 };
 
 let username = '';
@@ -82,8 +84,8 @@ async function getAll(includeRoles) {
         return accounts;
     }
 }
-async function getUserWithRoles(user_id) {
-    return Account.findAll({where: {user_id: user_id}, include: [Role]});
+async function getUserWithRoles(id) {
+    return Account.findAll({where: {user_id: id}, include: [Role]});
 }
 
 async function isUserAdmin(user_id) {
@@ -135,6 +137,32 @@ async function deleteAccount(id) {
             user_id: id
         }
     });
+}
+
+async function editAccount(id, {username, password, email, roles}) {
+    if (id == '2') {
+        throw 'You cannot edit the admin account';
+    }
+    const account = await Account.scope(null).findOne({where: {user_id: id}});
+    account.username = username;
+    if (password) {
+        account.password = password;
+    }
+    account.email = email;
+    account.save();
+    await AccountRoles.destroy({
+        where: {
+            user_id: id
+        }
+    });
+    if (roles != undefined) {
+        roles.forEach(async role => {
+            const userRole = await AccountRoles.create({user_id: id, role_id: role.role_id});
+        });    
+    }
+    else {
+        const userRole = await AccountRoles.create({user_id: id, role_id: 1});
+    }
 }
 
 
