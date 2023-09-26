@@ -50,9 +50,8 @@ app.use(cookieSession({
 // api routes
 app.use('/users', require('./users/users.controller'));
 app.use('/estoque', require('./estoque/estoque.controller'));
+app.use('/produto', require('./produto/produto.controller'));
 app.use('/movimentacao', require('./movimentacao/movimentacao.controller'));
-
-
 
 // global error handler
 app.use(errorHandler);
