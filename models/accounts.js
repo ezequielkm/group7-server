@@ -28,5 +28,51 @@ const Account = database.sequelize.define('accounts', {
         type: Sequelize.DATE,
         allowNull: false
     }
+}, {
+    defaultScope: {
+      attributes: {
+        exclude: ['password']
+      }
+    }
+  })
+  const Role = database.sequelize.define('roles', {
+    role_id: {
+        type: Sequelize.INTEGER,
+        autoIncrement: true,
+        allowNull: false,
+        primaryKey: true
+    },
+    role_name: {
+        type: Sequelize.STRING,
+        allowNull: false
+    }
+}, { timestamps: false })
+const AccountRoles = database.sequelize.define('accountRoles', {
+    id: {
+        type: Sequelize.INTEGER,
+        autoIncrement: true,
+        allowNull: false,
+        primaryKey: true
+    },
+    user_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        foreignKey: true
+    },
+    role_id: {
+        type: Sequelize.INTEGER,
+        allowNull : false,
+        foreignKey: true
+    },
+    createdAt: {
+        type: Sequelize.DATE,
+        allowNull: false
+    },
+    updatedAt: {
+        type: Sequelize.DATE,
+        allowNull: false
+    }
 })
-module.exports = { Account };
+Account.belongsToMany(Role, { through: AccountRoles, foreignKey: 'user_id' });
+Role.belongsToMany(Account, { through: AccountRoles, foreignKey: 'role_id' });
+module.exports = { Account, Role, AccountRoles };

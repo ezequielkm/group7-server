@@ -6,6 +6,7 @@ const movimentacaoService = require('./movimentacao.service');
 router.get('/', getAll);
 router.post('/', addMovimentacao);
 router.delete('/:id', deleteMovimentacao);
+router.put('/:id', editMovimentacao);
 
 module.exports = router;
 
@@ -21,9 +22,18 @@ function addMovimentacao(req, res, next) {
         .catch(next);
 }
 
-function deleteMovimentacao(req, req, next) {
-    console.log('AAAAA: 1');
+function deleteMovimentacao(req, res, next) {    
     movimentacaoService.deleteMovimentacao(req.params.id)
         .then(() => res.json({}))
         .catch(next);
+}
+
+function editMovimentacao(req, res, next) {
+    console.log('EDIT 1 - ' + req.params.id);
+
+    movimentacaoService.editMovimentacao(req.params.id, req.body);
+
+    // movimentacaoService.editMovimentacao(req.params.id)
+    //     .then(() => res.json({}))
+    //     .catch(next);
 }

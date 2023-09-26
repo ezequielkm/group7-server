@@ -13,9 +13,11 @@ router.post('/authenticate', authenticate);
 router.post('/authenticateGit', authenticateGit);
 router.get('/', authenticateToken, getAll);
 router.post('/', createAccount);
-router.delete('/:id', authenticateToken, deleteAccount);
-
+router.delete('/:id', authenticateToken, authorizeAdmin, deleteAccount);
+router.get('/roles', authenticateToken, authorizeAdmin, getRoles);
 router.get('/AuthPage', oauthGitHub);
+router.post('/getAccessToken', getToken);
+router.get('/getUserDetails', getUserDetails);
 
 module.exports = router;
 
@@ -35,6 +37,12 @@ function getAll(req, res, next) {
         userService.getAll()
         .then(users => res.json(users))
         .catch(next);
+}
+
+function getRoles(req, res, next) {
+  userService.getRoles()
+  .then(roles => res.json(roles))
+  .catch(next);
 }
 
 function createAccount (req, res) {
@@ -71,15 +79,23 @@ function authenticateToken(req, res, next) {
     })
 }
 
+async function authorizeAdmin(req, res, next) {
+  let isAdmin = await userService.isUserAdmin(req.userId)
+  if(isAdmin){
+    next();
+  }
+  else {
+    console.log('authorizeAdmin-403')
+    return res.sendStatus(403);
+  }
+}
+
 function oauthGitHub(req, res) {
   let state = crypto.randomBytes(16).toString('hex');
   res.cookie('XSRF-TOKEN', state);
   res.send({ authUrl: "https://github.com/login/oauth/authorize?client_id=" + process.env.CLIENT_ID + '&redirect_uri=' + process.env.REDIRECT_URI + '&scope=read:user&allow_signup=' + true + '&state=' + state });
 }
 
-router.post('/getAccessToken', getToken);
-
-router.get('/getUserDetails', getUserDetails);
 
 function getToken(req, res) {
   let state = req.headers['x-xsrf-token'];

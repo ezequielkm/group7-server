@@ -3,14 +3,22 @@ const jwt = require('jsonwebtoken');
 
 const Account = require('models/accounts').Account;
 
+const Role = require('models/accounts').Role;
+
+const AccountRoles = require('models/accounts').AccountRoles;
+
 const crypto = require('crypto');
+
 
 module.exports = {
     authenticate,
     getAll,
     createAccount,
     deleteAccount,
-    authenticateGit
+    authenticateGit,
+    getUserWithRoles,
+    isUserAdmin,
+    getRoles
 };
 
 let username = '';
@@ -18,85 +26,111 @@ let password = '';
 let email = '';
 
 async function authenticate({ username, password }) {
-    const users = await Account.findAll();
+    //added null scope to this call so it will retrieve password as well. This is needed because default scope is hiding password values.
+    const accounts = await Account.scope(null).findAll();
 
-    const user = users.find(u => u.username === username && u.password === password);
+    const account = accounts.find(u => u.username === username && u.password === password);
 
-    if (!user) throw 'Username or password is incorrect';
+    if (!account) throw 'Username or password is incorrect';
 
     // create a jwt token that is valid for 3 hours
-    const token = jwt.sign({ sub: user.user_id }, config.secret, { expiresIn: '3h' });
+    const token = jwt.sign({ sub: account.user_id }, config.secret, { expiresIn: '3h' });
 
     return {
-        user,
+        account,
         token
     };
 }
 
 async function authenticateGit({ username, email }) {
-    const users = await Account.findAll();
+    const accounts = await Account.findAll();
+    //if we get here we already have an authenticated git account so we don't need to check its password.
+    const account = accounts.find(u => u.username === username && u.email === email);
 
-    const user = users.find(u => u.username === username && u.email === email);
-
-    if (!user) {
+    if (!account) {
         password = crypto.randomBytes(4).toString('hex');
         username = username;
         email = email;
-        await createGitAccount(username, password , email);
-        const users = await Account.findAll();
-        const user = users.find(u => u.username === username && u.email === email);
-        const token = jwt.sign({ sub: user.user_id }, config.secret, { expiresIn: '3h' });
+        const createdAccount = await createAccount({username, password , email});
+        const token = jwt.sign({ sub: createdAccount.user_id }, config.secret, { expiresIn: '3h' });
         return {
-            user,
+            account,
             token
         };
     }
 
     // create a jwt token that is valid for 3 hours
-    const token = jwt.sign({ sub: user.user_id }, config.secret, { expiresIn: '3h' });
+    const token = jwt.sign({ sub: account.user_id }, config.secret, { expiresIn: '3h' });
 
     return {
-        user,
+        account,
         token
     };
 }
 
-async function getAll() {
-    const users = await Account.findAll();
-    return users;
+async function getAll(includeRoles) {
+    if (includeRoles) {
+        const accounts = await Account.findAll({
+            include: [
+              Role,
+            ],
+          });
+          return accounts;
+    }
+    else {
+        const accounts = await Account.findAll();
+        return accounts;
+    }
+}
+async function getUserWithRoles(user_id) {
+    return Account.findAll({where: {user_id: user_id}, include: [Role]});
 }
 
-async function createAccount({ username, password, email }) {
-      
-        // Create a Account
-        const account = {
-          username: username,
-          password: password,
-          email: email
-        };
-      
-        // Save Tutorial in the database
-        Account.create(account);
-      };
+async function isUserAdmin(user_id) {
+    const user = await AccountRoles.findOne({
+        where: {
+          user_id: user_id,
+          role_id: 2
+        }
+      });
+    return user;
+}
 
-      async function createGitAccount(username, password , email) {
-      
+async function getRoles() {
+    const roles = await Role.findAll();
+    return roles;
+}
+
+async function createAccount({ username, password, email, roles}) {
+        
         // Create a Account
         const account = {
           username: username,
           password: password,
           email: email
         };
-      
-        // Save Tutorial in the database
-        await Account.create(account);
-      };
+        const createdAccount = await Account.create(account);
+        if (roles != undefined) {
+            roles.forEach(async role => {
+                const userRole = await AccountRoles.create({user_id: createdAccount.user_id, role_id: role.role_id});
+            });    
+        }
+        else {
+            const userRole = await AccountRoles.create({user_id: createdAccount.user_id, role_id: 1});
+        }
+        return createdAccount;
+};
 
 async function deleteAccount(id) {
     if (id == '2') {
         throw 'You cannot delete the admin account';
     }
     await Account.destroy({
+        where: {
+            user_id: id
+        }
+    });
+    await AccountRoles.destroy({
         where: {
             user_id: id
         }
