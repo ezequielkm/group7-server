@@ -63,8 +63,16 @@ const AccountRoles = database.sequelize.define('accountRoles', {
         type: Sequelize.INTEGER,
         allowNull : false,
         foreignKey: true
+    },
+    createdAt: {
+        type: Sequelize.DATE,
+        allowNull: false
+    },
+    updatedAt: {
+        type: Sequelize.DATE,
+        allowNull: false
     }
-}, { timestamps: false })
+})
 Account.belongsToMany(Role, { through: AccountRoles, foreignKey: 'user_id' });
 Role.belongsToMany(Account, { through: AccountRoles, foreignKey: 'role_id' });
 module.exports = { Account, Role, AccountRoles };
