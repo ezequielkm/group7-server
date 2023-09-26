@@ -41,14 +41,14 @@ async function editMovimentacao(id, {tipo, produto, quantidade, preco}) {
     
     try 
     {
-        // let movimentacao = await Movimentacao.findAll({where: {id}});
+        // let movimentacao = await Movimentacao.findOne({where: {id}});
         
         // movimentacao.tipo = tipo;
         // movimentacao.produto = produto;
         // movimentacao.quantidade = quantidade;
         // movimentacao.preco = preco;
                     
-        // movimentacao.save();
+        // movimentacao.save();        
     } 
     catch (error) 
     {
