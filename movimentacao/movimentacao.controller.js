@@ -30,8 +30,10 @@ function deleteMovimentacao(req, res, next) {
 
 function editMovimentacao(req, res, next) {
     console.log('EDIT 1 - ' + req.params.id);
-        
-    movimentacaoService.editMovimentacao(req.params.id)
-        .then(() => res.json({}))
-        .catch(next);
+
+    movimentacaoService.editMovimentacao(req.params.id, req.body);
+
+    // movimentacaoService.editMovimentacao(req.params.id)
+    //     .then(() => res.json({}))
+    //     .catch(next);
 }
