@@ -17,7 +17,8 @@ module.exports = {
     deleteAccount,
     authenticateGit,
     getUserWithRoles,
-    isUserAdmin
+    isUserAdmin,
+    getRoles
 };
 
 let username = '';
@@ -50,10 +51,8 @@ async function authenticateGit({ username, email }) {
         password = crypto.randomBytes(4).toString('hex');
         username = username;
         email = email;
-        await createAccount(username, password , email);
-        const accounts = await Account.findAll(false);
-        const account = accounts.find(u => u.username === username && u.email === email);
-        const token = jwt.sign({ sub: user.user_id }, config.secret, { expiresIn: '3h' });
+        const createdAccount = await createAccount({username, password , email});
+        const token = jwt.sign({ sub: createdAccount.user_id }, config.secret, { expiresIn: '3h' });
         return {
             account,
             token
@@ -101,25 +100,26 @@ async function getRoles() {
     const roles = await Role.findAll();
     return roles;
 }
-async function grantPermission({ user_id, role_id }) {
-    const user = await Account.findOne({where: {user_id: user_id}});
-    await user.AddRole(role_id);
-    // const Roles = await getRoles();
-    // const role = Roles.find(r => r.role_id === role_id);
-    // await AccountRoles.create({user_id: user_id, role_id: role.role_id} );
-}
-async function createAccount({ username, password, email }) {
-      
+
+async function createAccount({ username, password, email, roles}) {
+        
         // Create a Account
         const account = {
           username: username,
           password: password,
           email: email
         };
-      
         const createdAccount = await Account.create(account);
-        const userRole = await AccountRoles.create({user_id: createdAccount.user_id, role_id: 1});
-      };
+        if (roles != undefined) {
+            roles.forEach(async role => {
+                const userRole = await AccountRoles.create({user_id: createdAccount.user_id, role_id: role.role_id});
+            });    
+        }
+        else {
+            const userRole = await AccountRoles.create({user_id: createdAccount.user_id, role_id: 1});
+        }
+        return createdAccount;
+};
 
 async function deleteAccount(id) {
     if (id == '2') {

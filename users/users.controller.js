@@ -14,7 +14,7 @@ router.post('/authenticateGit', authenticateGit);
 router.get('/', authenticateToken, getAll);
 router.post('/', createAccount);
 router.delete('/:id', authenticateToken, authorizeAdmin, deleteAccount);
-
+router.get('/roles', authenticateToken, authorizeAdmin, getRoles);
 router.get('/AuthPage', oauthGitHub);
 router.post('/getAccessToken', getToken);
 router.get('/getUserDetails', getUserDetails);
@@ -37,6 +37,12 @@ function getAll(req, res, next) {
         userService.getAll()
         .then(users => res.json(users))
         .catch(next);
+}
+
+function getRoles(req, res, next) {
+  userService.getRoles()
+  .then(roles => res.json(roles))
+  .catch(next);
 }
 
 function createAccount (req, res) {
