@@ -20,6 +20,7 @@ router.get('/roles', authenticateToken, authorizeAdmin, getRoles);
 router.get('/AuthPage', oauthGitHub);
 router.post('/getAccessToken', getToken);
 router.get('/getUserDetails', getUserDetails);
+router.post('/logout', logout);
 
 module.exports = router;
 
@@ -33,6 +34,14 @@ function authenticateGit(req, res, next) {
   userService.authenticateGit(req.body)
       .then(user => res.json(user))
       .catch(next);
+}
+
+function logout(req, res, next) {
+  res.clearCookie('XSRF-TOKEN');
+  res.clearCookie('login');
+  res.clearCookie('sess');  
+  res.clearCookie('sess.sig');
+  res.end();
 }
 
 function getAll(req, res, next) {
