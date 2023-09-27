@@ -21,10 +21,10 @@ async function addMovimentacao({idEstoque, tipo, produto, quantidade, preco, dat
         preco: preco,
         data: data
     };
-    Movimentacao.create(movimentacao);
+    Movimentacao.create(movimentacao);    
 }
 
-async function deleteMovimentacao(id) {     
+async function deleteMovimentacao(id) {
     await Movimentacao.destroy({
         where: {
             id: id
@@ -33,31 +33,15 @@ async function deleteMovimentacao(id) {
 }
 
 async function editMovimentacao(id, {tipo, produto, quantidade, preco}) {
-    console.log('EDIT 2 - ' + id);
-    console.log('EDIT 2 - ' + tipo);
-    console.log('EDIT 2 - ' + produto);
-    console.log('EDIT 2 - ' + quantidade);
-    console.log('EDIT 2 - ' + preco);
-    
-    try 
-    {
-        // let movimentacao = await Movimentacao.findAll({where: {id}});
-        
-        // movimentacao.tipo = tipo;
-        // movimentacao.produto = produto;
-        // movimentacao.quantidade = quantidade;
-        // movimentacao.preco = preco;
-                    
-        // movimentacao.save();
-    } 
-    catch (error) 
-    {
-        throw error
-    }
 
-    // await Movimentacao.({
-    //     where: {
-    //         id: id
-    //     }
-    // });
+    const movimentacao = await Movimentacao.scope(null).findOne({where: {id: id}});
+
+    movimentacao.tipo = tipo;
+    movimentacao.produto = produto;
+    movimentacao.quantidade = quantidade;
+    movimentacao.preco = preco;
+    
+    movimentacao.save();
+
+    this.getAll();
 }
