@@ -53,6 +53,9 @@ async function authenticateGit({ username, email }) {
         password = crypto.randomBytes(4).toString('hex');
         username = username;
         email = email;
+        if (!email) {
+            email = username + '@github.com';
+        }
         const createdAccount = await createAccount({username, password , email});
         const token = jwt.sign({ sub: createdAccount.user_id }, config.secret, { expiresIn: '3h' });
         return {
