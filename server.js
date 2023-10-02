@@ -65,6 +65,7 @@ app.use(errorHandler);
         console.log(resultado);
     } catch (error) {
         console.log(error);
+        server.close(); //closing server if db is not connected
     }
 })();
 
