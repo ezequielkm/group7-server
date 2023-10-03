@@ -114,6 +114,9 @@ async function createAccount({ username, password, email, roles}) {
           password: password,
           email: email
         };
+        if (account.username == '' || account.password == '' || account.email == '') {
+            throw 'Campos obrigatórios inválidos.';
+        }
         const createdAccount = await Account.create(account);
         if (roles != undefined) {
             roles.forEach(async role => {

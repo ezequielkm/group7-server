@@ -16,7 +16,7 @@ router.post('/', createAccount);
 router.get('/user/:id', authenticateToken, authorizeAdmin, getUser);
 router.put('/:id', authenticateToken, authorizeAdmin, editAccount);
 router.delete('/:id', authenticateToken, authorizeAdmin, deleteAccount);
-router.get('/roles', authenticateToken, authorizeAdmin, getRoles);
+router.get('/roles', authenticateToken, getRoles);
 router.get('/AuthPage', oauthGitHub);
 router.post('/getAccessToken', getToken);
 router.get('/getUserDetails', getUserDetails);
