@@ -16,7 +16,7 @@ function getAll(req, res, next) {
         .catch(next);
 }
 
-function addMovimentacao(req, res, next) {
+function addMovimentacao(req, res, next) {    
     movimentacaoService.addMovimentacao(req.body)
         .then(() => res.json({}))
         .catch(next);

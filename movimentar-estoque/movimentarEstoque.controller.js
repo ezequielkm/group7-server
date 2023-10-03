@@ -21,8 +21,7 @@ function addMovimentacao(req, res, next) {
         .catch(next);
 }
 
-function deleteMovimentacao(req, req, next) {
-    console.log('AAAAA: 1');
+function deleteMovimentacao(req, req, next) {    
     movimentacaoService.deleteMovimentacao(req.params.id)
         .then(() => res.json({}))
         .catch(next);

@@ -54,4 +54,26 @@ const deleteProduct = async(id) =>
     }
 }
 
-module.exports = {editProduct, addProduct, getAllProduct, deleteProduct}
+const getProduto = async(id) =>
+{
+    try 
+    {
+        console.log("AAAAA 3 id: " + id);
+        console.log("AAAAA 4 prod: " + await Product.findAll({where: {id}}).nome); 
+
+        return await Product.findAll({where: {id}});
+    } 
+    catch (error) 
+    {
+        throw error
+    }
+}
+
+// async function getProduto(id) {    
+//     console.log("AAAAA 3 id: " + id);
+//     console.log("AAAAA 4 prod: " + Product.findAll({where: {id: id}}));
+
+//     return Product.findAll({where: {id: id}});
+// }
+
+module.exports = {editProduct, addProduct, getAllProduct, deleteProduct, getProduto}

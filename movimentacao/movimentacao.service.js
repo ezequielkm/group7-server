@@ -12,11 +12,11 @@ async function getAll() {
     return movimentacao;
 }
 
-async function addMovimentacao({idEstoque, tipo, produto, quantidade, preco, data}) {
+async function addMovimentacao({idEstoque, idProduto, tipo, quantidade, preco, data}) {    
     const movimentacao = {
         idEstoque: idEstoque,
-        tipo: tipo,
-        produto: produto,
+        idProduto: idProduto,
+        tipo: tipo,        
         quantidade: quantidade,
         preco: preco,
         data: data
@@ -32,12 +32,13 @@ async function deleteMovimentacao(id) {
     });
 }
 
-async function editMovimentacao(id, {tipo, produto, quantidade, preco}) {
+async function editMovimentacao(id, {tipo, idEstoque, idProduto, quantidade, preco}) {
 
     const movimentacao = await Movimentacao.scope(null).findOne({where: {id: id}});
 
     movimentacao.tipo = tipo;
-    movimentacao.produto = produto;
+    movimentacao.idEstoque = idEstoque;
+    movimentacao.idProduto = idProduto;    
     movimentacao.quantidade = quantidade;
     movimentacao.preco = preco;
     

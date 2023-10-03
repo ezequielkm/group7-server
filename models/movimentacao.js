@@ -1,5 +1,7 @@
 const Sequelize = require('sequelize');
 const database = require('db');
+const { Estoque } = require('./estoque');
+const { Product } = require('./product');
 
 const Movimentacao = database.sequelize.define('movimentacao', {
     id: {
@@ -10,14 +12,22 @@ const Movimentacao = database.sequelize.define('movimentacao', {
     },
     idEstoque: {
         type: Sequelize.BIGINT,        
-        allowNull: false        
+        references: {
+            model: Estoque,
+            key: 'id'
+        },
+        allowNull: false
     },
     tipo: {
         type: Sequelize.SMALLINT,
         allowNull: false
-    },
-    produto: {
-        type: Sequelize.STRING,
+    },    
+    idProduto: {
+        type: Sequelize.BIGINT,        
+        references: {
+            model: Product,
+            key: 'id'
+        },
         allowNull: false
     },
     quantidade: {
@@ -39,6 +49,6 @@ const Movimentacao = database.sequelize.define('movimentacao', {
     updatedAt: {
         type: Sequelize.DATE,
         allowNull: false
-    }
+    }    
 })
 module.exports = { Movimentacao };
