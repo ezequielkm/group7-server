@@ -81,9 +81,7 @@ const authentication = async (request, response, next) =>
 const getProduto = async (request, response, next) =>
 {
     try 
-    {
-        console.log("AAAAA 2 req.params.id: " + request.params.id);
-
+    {        
         const produto = await productService.getProduto(request.params.id)
 
         if(!produto)
@@ -98,13 +96,6 @@ const getProduto = async (request, response, next) =>
         response.status(400).send({message: `Houve um problema ao buscar o produto: ${error.message}`})
     }
 }  
-
-// function getProduto(req, res, next) {        
-//     console.log("AAAAA 2 req.params.id: " + req.params.id);
-//     productService.getProduto(req.params.id)
-//         .then(produto => res.json(produto))
-//         .catch(next);
-// }
 
 router.put('/:id', authentication, editProduct);
 router.post('/', authentication, addProduct);
